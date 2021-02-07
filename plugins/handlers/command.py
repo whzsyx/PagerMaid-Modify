@@ -1,12 +1,7 @@
 import logging
-import re
-from copy import deepcopy
-from subprocess import run, PIPE
 
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-
-from .. import glovar
 
 # Enable logging
 logger = logging.getLogger(__name__)
