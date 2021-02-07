@@ -12,7 +12,7 @@ from .. import glovar
 logger = logging.getLogger(__name__)
 
 
-@Client.on_message(filters.outcoming & filters.command(["hello"], '-'))
+@Client.on_message(filters.outgoing & filters.command(["hello"], '-'))
 def hello(client: Client, message: Message) -> bool:
     message.reply('hello!')
     return True
