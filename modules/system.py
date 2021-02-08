@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from main import cmd, par, des
-from sys import exit
+from sys import exit, platform
 from asyncio import create_subprocess_shell
 from asyncio.subprocess import PIPE
 from platform import node
@@ -61,7 +61,15 @@ async def sh(client, message):
         f"\n> `$` {command}"
     )
 
-    result = await execute(command)
+    if not platform == 'win32':
+        result = await execute(command)
+    else:
+        import subprocess
+        subprocess.Popen('dir', shell=True)
+        sub = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+        sub.wait()
+        stdout = sub.communicate()
+        result = str(stdout[0].decode('gbk').strip())
 
     if result:
         if len(result) > 4096:
