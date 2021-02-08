@@ -11,3 +11,4 @@ pypng
 pyzbar
 pyrogram
 redis
+wordcloud

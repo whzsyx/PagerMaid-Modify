@@ -94,7 +94,7 @@ async def plugin(client, message):
                     pass
                 return
             move_plugin(file_path)
-            await message.edit(f"插件 {path.basename(file_path)[:-3]} 已安装，PagerMaid-Modify 正在重新启动。")
+            await message.edit(f"插件 {path.basename(file_path)[:-3]} 已安装，PagerMaid-Modify Beta 正在重新启动。")
             exit()
         elif len(message.text.split()) >= 3:
             await message.edit("安装插件中 . . .")
@@ -155,7 +155,7 @@ async def plugin(client, message):
                 msg += "无需更新 : %s\n" % ", ".join(noneed_list)
             restart = len(success_list) > 0
             if restart:
-                msg += "PagerMaid-Modify 正在重启。"
+                msg += "PagerMaid-Modify Beta 正在重启。"
             await message.edit(msg)
             if restart:
                 exit()
@@ -173,7 +173,7 @@ async def plugin(client, message):
                         json.dump(version_json, f)
                 except:
                     pass
-                await message.edit(f"成功删除插件 {message.text.split()[2]}, PagerMaid-Modify 正在重新启动。")
+                await message.edit(f"成功删除插件 {message.text.split()[2]}, PagerMaid-Modify Beta 正在重新启动。")
                 exit()
             elif exists(f"{plugin_directory}{message.text.split()[2]}.py.disabled"):
                 remove(f"{plugin_directory}{message.text.split()[2]}.py.disabled")
@@ -230,7 +230,7 @@ async def plugin(client, message):
             if exists(f"{plugin_directory}{message.text.split()[2]}.py.disabled"):
                 rename(f"{plugin_directory}{message.text.split()[2]}.py.disabled",
                        f"{plugin_directory}{message.text.split()[2]}.py")
-                await message.edit(f"插件 {message.text.split()[2]} 已启用，PagerMaid-Modify 正在重新启动。")
+                await message.edit(f"插件 {message.text.split()[2]} 已启用，PagerMaid-Modify Beta 正在重新启动。")
                 exit()
             else:
                 await message.edit("出错了呜呜呜 ~ 指定的插件不存在。")
@@ -241,7 +241,7 @@ async def plugin(client, message):
             if exists(f"{plugin_directory}{message.text.split()[2]}.py") is True:
                 rename(f"{plugin_directory}{message.text.split()[2]}.py",
                        f"{plugin_directory}{message.text.split()[2]}.py.disabled")
-                await message.edit(f"插件 {message.text.split()[2]} 已被禁用，PagerMaid-Modify 正在重新启动。")
+                await message.edit(f"插件 {message.text.split()[2]} 已被禁用，PagerMaid-Modify Beta 正在重新启动。")
                 exit()
             else:
                 await message.edit("出错了呜呜呜 ~ 指定的插件不存在。")
