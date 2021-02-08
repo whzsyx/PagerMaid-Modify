@@ -26,11 +26,6 @@ async def execute(command, pass_error=True):
     return result
 
 
-cmd.extend(['sh'])
-par.extend(['<命令>'])
-des.extend(['在 Telegram 上远程执行 Shell 命令。'])
-
-
 async def attach_log(client, plaintext, chat_id, file_name, reply_id=None, caption=None):
     """ Attach plaintext as logs. """
     file = open(file_name, "w+")
@@ -43,6 +38,11 @@ async def attach_log(client, plaintext, chat_id, file_name, reply_id=None, capti
         caption=caption
     )
     remove(file_name)
+
+
+cmd.extend(['sh'])
+par.extend(['<命令>'])
+des.extend(['在 Telegram 上远程执行 Shell 命令。'])
 
 
 @Client.on_message(filters.me & filters.command('sh', list('.:!')))
