@@ -51,7 +51,7 @@ async def update(client, message):
         await message.edit(f"出错了呜呜呜 ~ 目录 {exception} 不存在。")
         return
     except InvalidGitRepositoryError:
-        await message.edit(f"此 PagerMaid-Modify 实例不是从源安装,"
+        await message.edit(f"此 PagerMaid-Modify Beta 实例不是从源安装,"
                            f" 请通过您的本机软件包管理器进行升级。")
         return
     except GitCommandError as exception:
@@ -75,7 +75,7 @@ async def update(client, message):
 
     if not parameter:
         if not changelog:
-            await message.edit(f"`PagerMaid-Modify 在分支 ` **{active_branch}**` 中已是最新。`")
+            await message.edit(f"`PagerMaid-Modify Beta 在分支 ` **{active_branch}**` 中已是最新。`")
             return
         changelog_str = f'**找到分支 {active_branch} 的更新.\n\n更新日志:**\n`{changelog}`'
         if len(changelog_str) > 4096:
@@ -109,13 +109,13 @@ async def update(client, message):
         await execute("python3 -m pip install -r requirements.txt --upgrade")
         await execute("python3 -m pip install -r requirements.txt")
         await message.edit(
-            '更新成功，PagerMaid-Modify 正在重新启动。'
+            '更新成功，PagerMaid-Modify Beta 正在重新启动。'
         )
         exit()
     except GitCommandError:
         upstream_remote.git.reset('--hard')
         await message.edit(
-            '更新时出现错误，PagerMaid-Modify 正在重新启动。'
+            '更新时出现错误，PagerMaid-Modify Beta 正在重新启动。'
         )
         exit()
 

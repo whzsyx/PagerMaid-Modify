@@ -15,7 +15,6 @@ working_dir = getcwd()
 
 
 def move_plugin(file_path):
-    file_path = file_path.replace('downloads/', '')
     plugin_directory = f"{working_dir}/modules/plugins/"
     if exists(f"{plugin_directory}{file_path}"):
         remove(f"{plugin_directory}{file_path}")
@@ -83,9 +82,9 @@ async def plugin(client, message):
         if len(message.text.split()) == 2:
             await message.edit("安装插件中 . . .")
             if reply:
-                file_path = await client.download_media(reply)
+                file_path = await client.download_media(reply, file_name=reply.document.file_name)
             else:
-                file_path = await message.download_media()
+                file_path = await message.download_media(file_name=message.document.file_name)
             if file_path is None or not file_path.endswith('.py'):
                 await message.edit("出错了呜呜呜 ~ 无法从附件获取插件文件。")
                 try:
