@@ -20,7 +20,8 @@ async def prune(client, message):
     input_chat = message.chat.id
     messages = []
     count = 0
-    async for msg in client.iter_history(input_chat, offset=message.reply_to_message.message_id):
+    limit = message.message_id - message.reply_to_message.message_id
+    async for msg in client.iter_history(input_chat, limit=limit):
         messages.append(msg.message_id)
         count += 1
         if len(messages) == 100:
