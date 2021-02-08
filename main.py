@@ -1,3 +1,4 @@
+import logging
 from pyrogram import Client
 from configparser import RawConfigParser
 from redis import StrictRedis
@@ -16,6 +17,14 @@ redis_host = config.get("redis", "redis_host", fallback=redis_host)
 redis_port = config.get("redis", "redis_port", fallback=redis_port)
 redis_db = config.get("redis", "redis_db", fallback=redis_db)
 redis = StrictRedis(host=redis_host, port=redis_port, db=redis_db)
+# Enable logging
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.WARNING,
+    filename="log",
+    filemode="a"
+)
+logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
     Client("pagermaid").run()
