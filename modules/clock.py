@@ -3,7 +3,7 @@
 from datetime import datetime
 from pytz import country_names, country_timezones, timezone
 from pyrogram import Client, filters
-from main import cmd, par, des
+from main import cmd, par, des, prefix_str
 
 
 cmd.extend(['time'])
@@ -11,7 +11,7 @@ par.extend(['<地区>'])
 des.extend(['显示特定区域的时间，如果参数为空，则默认显示中国。'])
 
 
-@Client.on_message(filters.me & filters.command('time', list('.:!')))
+@Client.on_message(filters.me & filters.command('time', list(prefix_str)))
 async def time(client, message):
     """ For querying time. """
     if len(message.text.split()) > 2:

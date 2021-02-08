@@ -1,0 +1,12 @@
+certifi
+speedtest-cli
+pillow
+wordcloud
+pytz
+requests
+pyyaml
+emoji
+email_validator
+pypng
+pyzbar
+pyrogram

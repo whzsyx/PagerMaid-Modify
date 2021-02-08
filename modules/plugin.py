@@ -9,7 +9,7 @@ from sys import exit
 from shutil import copyfile, move
 from glob import glob
 from pyrogram import Client, filters
-from main import cmd, par, des
+from main import cmd, par, des, prefix_str
 
 working_dir = getcwd()
 
@@ -71,7 +71,7 @@ des.extend(['用于管理安装到 PagerMaid-Modify 的插件。'])
 active_plugins = sorted(__list_plugins())
 
 
-@Client.on_message(filters.me & filters.command('apt', list('.:!')))
+@Client.on_message(filters.me & filters.command('apt', list(prefix_str)))
 async def plugin(client, message):
     if len(message.text.split()) == 1:
         await message.edit("出错了呜呜呜 ~ 无效的参数。")

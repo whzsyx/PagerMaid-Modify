@@ -1,12 +1,12 @@
 from pyrogram import Client, filters
-from main import cmd, par, des
+from main import cmd, par, des, prefix_str
 
 cmd.extend(['help'])
 par.extend(['<命令>'])
 des.extend(['显示命令列表或单个命令的帮助。'])
 
 
-@Client.on_message(filters.me & filters.command('help', list('.:!')))
+@Client.on_message(filters.me & filters.command('help', list(prefix_str)))
 async def help_com(client, message):
     if len(message.text.split()) == 2:
         command = message.text.split()[1]

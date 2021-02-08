@@ -1,5 +1,5 @@
 from pyrogram import Client, filters
-from main import cmd, par, des
+from main import cmd, par, des, prefix_str
 from sys import exit, platform
 from asyncio import create_subprocess_shell
 from asyncio.subprocess import PIPE
@@ -45,7 +45,7 @@ par.extend(['<命令>'])
 des.extend(['在 Telegram 上远程执行 Shell 命令。'])
 
 
-@Client.on_message(filters.me & filters.command('sh', list('.:!')))
+@Client.on_message(filters.me & filters.command('sh', list(prefix_str)))
 async def sh(client, message):
     """ Use the command-line from Telegram. """
     user = getuser()
@@ -90,7 +90,7 @@ par.extend([''])
 des.extend(['使 PagerMaid-Modify 重新启动。'])
 
 
-@Client.on_message(filters.me & filters.command('restart', list('.:!')))
+@Client.on_message(filters.me & filters.command('restart', list(prefix_str)))
 async def restart(client, message):
     """ To re-execute PagerMaid. """
     if not message.text[0].isalpha():

@@ -1,14 +1,14 @@
 import json
 from requests import get
 from pyrogram import Client, filters
-from main import cmd, par, des
+from main import cmd, par, des, prefix_str
 
 cmd.extend(['id'])
 par.extend([''])
 des.extend(['获取一条消息的各种信息。'])
 
 
-@Client.on_message(filters.me & filters.command('id', list('.:!')))
+@Client.on_message(filters.me & filters.command('id', list(prefix_str)))
 async def userid(client, message):
     """ Query the UserID of the sender of the message you replied to. """
     msg = message.reply_to_message
@@ -80,7 +80,7 @@ par.extend(['<次数>'])
 des.extend(['在当前会话复读回复的消息。（需要回复一条消息）'])
 
 
-@Client.on_message(filters.me & filters.command('re', list('.:!')))
+@Client.on_message(filters.me & filters.command('re', list(prefix_str)))
 async def re(client, message):
     """ Forwards a message into this group """
     reply = message.reply_to_message
@@ -108,7 +108,7 @@ par.extend([''])
 des.extend(['每日一言。'])
 
 
-@Client.on_message(filters.me & filters.command('hitokoto', list('.:!')))
+@Client.on_message(filters.me & filters.command('hitokoto', list(prefix_str)))
 async def hitokoto(client, message):
     """ Get hitokoto.cn """
     hitokoto_while = 1

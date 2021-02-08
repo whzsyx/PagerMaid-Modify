@@ -1,6 +1,6 @@
 """ Module to automate message deletion. """
 from pyrogram import Client, filters
-from main import cmd, par, des
+from main import cmd, par, des, prefix_str
 from asyncio import sleep
 from pyrogram.errors import ChatAdminRequired
 
@@ -11,7 +11,7 @@ des.extend(['以此命令回复某条消息，将删除最新一条消息至该�
             '会触发删除消息过快限制。（非群组管理员只删除自己的消息）'])
 
 
-@Client.on_message(filters.me & filters.command('prune', list('.:!')))
+@Client.on_message(filters.me & filters.command('prune', list(prefix_str)))
 async def prune(client, message):
     """ Purge every single message after the message you replied to. """
     if not message.reply_to_message:
@@ -40,7 +40,7 @@ des.extend(['删除当前对话您发送的特定数量的消息。限制：基�
             '无法删除。（倒序）当数字足够大时即可实现删除所有消息。'])
 
 
-@Client.on_message(filters.me & filters.command('selfprune', list('.:!')))
+@Client.on_message(filters.me & filters.command('selfprune', list(prefix_str)))
 async def selfprune(client, message):
     """ Deletes specific amount of messages you sent. """
     if not len(message.text.split()) == 2:
@@ -70,7 +70,7 @@ des.extend(['删除当前对话您回复用户所发送的特定数量的消息�
             '限制。（倒序、需要删除消息权限）当数字足够大时即可实现删除所有消息。'])
 
 
-@Client.on_message(filters.me & filters.command('yourprune', list('.:!')))
+@Client.on_message(filters.me & filters.command('yourprune', list(prefix_str)))
 async def yourprune(client, message):
     """ Deletes specific amount of messages someone sent. """
     if not message.reply_to_message:
@@ -104,7 +104,7 @@ par.extend([''])
 des.extend(['删除当前对话您回复的那条消息。（需要回复一条消息）'])
 
 
-@Client.on_message(filters.me & filters.command('del', list('.:!')))
+@Client.on_message(filters.me & filters.command('del', list(prefix_str)))
 async def delete(client, message):
     """ Deletes the message you replied to. """
     if message.reply_to_message:

@@ -1,5 +1,5 @@
 from pyrogram import Client, filters
-from main import cmd, par, des
+from main import cmd, par, des, prefix_str
 from struct import error as StructError
 from os import remove
 
@@ -9,7 +9,7 @@ par.extend(['<username>'])
 des.extend(['生成一位用户简介 ~ 消息有点长。'])
 
 
-@Client.on_message(filters.me & filters.command('profile', list('.:!')))
+@Client.on_message(filters.me & filters.command('profile', list(prefix_str)))
 async def profile(client, message):
     """ Queries profile of a user. """
     if len(message.text.split()) > 2:

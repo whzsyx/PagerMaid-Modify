@@ -1,0 +1,12 @@
+[Unit]
+Description=PagerMaid-Modify Beta telegram utility daemon
+After=network.target
+ 
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+WorkingDirectory=/var/lib/pagermaid-beta
+ExecStart=/usr/bin/python3 main.py
+Restart=always

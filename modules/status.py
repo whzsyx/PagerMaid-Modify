@@ -1,5 +1,5 @@
 from pyrogram import Client, filters, __version__
-from main import cmd, par, des
+from main import cmd, par, des, prefix_str
 from modules.system import execute
 from platform import python_version, uname
 from sys import platform
@@ -12,7 +12,7 @@ par.extend([''])
 des.extend(['通过 neofetch 检索系统信息。'])
 
 
-@Client.on_message(filters.me & filters.command('sysinfo', list('.:!')))
+@Client.on_message(filters.me & filters.command('sysinfo', list(prefix_str)))
 async def sysinfo(client, message):
     """ Retrieve system information via neofetch. """
     if platform == 'win32':
@@ -28,7 +28,7 @@ par.extend([''])
 des.extend(['输出 PagerMaid-Modify 的运行状态。'])
 
 
-@Client.on_message(filters.me & filters.command('status', list('.:!')))
+@Client.on_message(filters.me & filters.command('status', list(prefix_str)))
 async def status(client, message):
     await message.edit(
         f"**PagerMaid-Modify Beta 运行状态** \n"
@@ -45,7 +45,7 @@ par.extend([''])
 des.extend(['执行 speedtest 脚本并发送结果。'])
 
 
-@Client.on_message(filters.me & filters.command('speedtest', list('.:!')))
+@Client.on_message(filters.me & filters.command('speedtest', list(prefix_str)))
 async def speedtest(client, message):
     """ Tests internet speed using speedtest. """
     await message.edit("执行测试脚本 . . .")
@@ -69,7 +69,7 @@ par.extend([''])
 des.extend(['计算运行 PagerMaid-Modify 的服务器和 Telegram 服务器之间的延迟。'])
 
 
-@Client.on_message(filters.me & filters.command('ping', list('.:!')))
+@Client.on_message(filters.me & filters.command('ping', list(prefix_str)))
 async def ping(client, message):
     """ Calculates latency between PagerMaid and Telegram. """
     start = datetime.now()
