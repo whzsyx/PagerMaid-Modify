@@ -1,3 +1,5 @@
+import json
+from requests import get
 from pyrogram import Client, filters
 from main import cmd, par, des
 
@@ -78,7 +80,7 @@ par.extend(['<次数>'])
 des.extend(['在当前会话复读回复的消息。（需要回复一条消息）'])
 
 
-@Client.on_message(filters.command('re', list('.:!')))
+@Client.on_message(filters.me & filters.command('re', list('.:!')))
 async def re(client, message):
     """ Forwards a message into this group """
     reply = message.reply_to_message
@@ -99,3 +101,28 @@ async def re(client, message):
             await client.forward_messages(message.chat.id, message.chat.id, reply.message_id)
     else:
         await message.edit("出错了呜呜呜 ~ 您好像没有回复一条消息。")
+
+
+cmd.extend(['hitokoto'])
+par.extend([''])
+des.extend(['每日一言。'])
+
+
+@Client.on_message(filters.me & filters.command('hitokoto', list('.:!')))
+async def hitokoto(client, message):
+    """ Get hitokoto.cn """
+    hitokoto_while = 1
+    try:
+        hitokoto_json = json.loads(get("https://v1.hitokoto.cn/?charset=utf-8").content.decode("utf-8"))
+    except ValueError:
+        while hitokoto_while < 10:
+            hitokoto_while += 1
+            try:
+                hitokoto_json = json.loads(get("https://v1.hitokoto.cn/?charset=utf-8").content.decode("utf-8"))
+                break
+            except:
+                continue
+    hitokoto_json_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l']
+    hitokoto_type_list = ['动画', '漫画', '游戏', '文学', '原创', '来自网络', '其他', '影视', '诗词', '网易云', '哲学', '抖机灵']
+    hitokoto_type = hitokoto_type_list[hitokoto_json_list.index(hitokoto_json['type'])]
+    await message.edit(f"{hitokoto_json['hitokoto']} - {hitokoto_json['from']}（{str(hitokoto_type)}）")
