@@ -15,6 +15,7 @@ working_dir = getcwd()
 
 
 def move_plugin(file_path):
+    file_path = file_path.replace('downloads/', '')
     plugin_directory = f"{working_dir}/modules/plugins/"
     if exists(f"{plugin_directory}{file_path}"):
         remove(f"{plugin_directory}{file_path}")
@@ -164,11 +165,14 @@ async def plugin(client, message):
         if len(message.text.split()) == 3:
             if exists(f"{plugin_directory}{message.text.split()[2]}.py"):
                 remove(f"{plugin_directory}{message.text.split()[2]}.py")
-                with open(f"{plugin_directory}version.json", 'r', encoding="utf-8") as f:
-                    version_json = json.load(f)
-                version_json[message.text.split()[2]] = '0.0'
-                with open(f"{plugin_directory}version.json", 'w') as f:
-                    json.dump(version_json, f)
+                try:
+                    with open(f"{plugin_directory}version.json", 'r', encoding="utf-8") as f:
+                        version_json = json.load(f)
+                    version_json[message.text.split()[2]] = '0.0'
+                    with open(f"{plugin_directory}version.json", 'w') as f:
+                        json.dump(version_json, f)
+                except:
+                    pass
                 await message.edit(f"成功删除插件 {message.text.split()[2]}, PagerMaid-Modify 正在重新启动。")
                 exit()
             elif exists(f"{plugin_directory}{message.text.split()[2]}.py.disabled"):

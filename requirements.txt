@@ -10,3 +10,4 @@ email_validator
 pypng
 pyzbar
 pyrogram
+redis

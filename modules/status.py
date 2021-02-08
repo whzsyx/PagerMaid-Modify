@@ -1,5 +1,5 @@
 from pyrogram import Client, filters, __version__
-from main import cmd, par, des, prefix_str
+from main import cmd, par, des, prefix_str, redis
 from modules.system import execute
 from platform import python_version, uname
 from sys import platform
@@ -30,13 +30,15 @@ des.extend(['输出 PagerMaid-Modify 的运行状态。'])
 
 @Client.on_message(filters.me & filters.command('status', list(prefix_str)))
 async def status(client, message):
+    redis_con = '在线' if redis_status() else "离线"
     await message.edit(
         f"**PagerMaid-Modify Beta 运行状态** \n"
         f"主机名: `{uname().node}` \n"
         f"主机平台: `{platform}` \n"
         f"Kernel 版本: `{uname().release}` \n"
         f"Python 版本: `{python_version()}` \n"
-        f"Library 版本: `{__version__}`"
+        f"Library 版本: `{__version__}` \n"
+        f"Redis 状态: `{redis_con}`"
     )
 
 
@@ -93,3 +95,11 @@ def unit_convert(byte):
         byte /= power
         zero += 1
     return f"{round(byte, 2)} {units[zero]}"
+
+
+def redis_status():
+    try:
+        redis.ping()
+        return True
+    except BaseException:
+        return False
