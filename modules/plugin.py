@@ -66,7 +66,7 @@ async def upload_attachment(client, file_path, chat_id, reply_id, caption=None):
     return True
 
 
-def check_plugin(name, version):
+def check_plugin(name):
     active_plugin = sorted(__list_plugins())
     disabled_plugins = []
     chdir("modules/plugins/")
