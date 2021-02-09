@@ -12,3 +12,4 @@ pyzbar
 pyrogram
 redis
 wordcloud
+GitPython

@@ -66,6 +66,19 @@ async def upload_attachment(client, file_path, chat_id, reply_id, caption=None):
     return True
 
 
+def check_plugin(name):
+    active_plugin = sorted(__list_plugins())
+    disabled_plugins = []
+    chdir("modules/plugins/")
+    for target_plugin in glob(f"*.py.disabled"):
+        disabled_plugins += [f"{target_plugin[:-12]}"]
+    chdir(working_dir)
+    if (name in active_plugin) and (not name in disabled_plugins):
+        return True
+    else:
+        return False
+
+
 cmd.extend(['apt'])
 par.extend(['{update|search|show|status|install|remove|enable|disable|upload} <插件名称/文件>'])
 des.extend(['用于管理安装到 PagerMaid-Modify 的插件。'])
@@ -259,7 +272,7 @@ async def plugin(client, message):
                 copyfile(f"{plugin_directory}{file_name}.disabled", file_name)
             if exists(file_name):
                 await message.edit("上传插件中 . . .")
-                await upload_attachment(client, file_name,message.chat.id, reply_id,
+                await upload_attachment(client, file_name, message.chat.id, reply_id,
                                         caption=f"PagerMaid-Modify {message.text.split()[2]} plugin.")
                 remove(file_name)
                 await message.delete()

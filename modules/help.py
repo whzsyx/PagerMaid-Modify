@@ -13,7 +13,7 @@ async def help_com(client, message):
         if command in cmd:
             parameters = par[cmd.index(command)]
             description = des[cmd.index(command)]
-            await message.edit(f'**使用方法:** `-{command} {parameters}`\
+            await message.edit(f'**Beta 使用方法:** `{list(prefix_str)[0]}{command} {parameters}`\
             \n{description}')
             return
         else:
@@ -23,5 +23,6 @@ async def help_com(client, message):
     for command in cmd:
         result += "`" + str(command)
         result += "`, "
-    await message.edit(result[:-2] + "\n**发送 \"!help <命令>\" 以-查看特定命令的-帮助。** [源代码](https://t.me/PagerMaid_Modify)",
+    await message.edit(result[:-2] + f"\n**发送 \"{list(prefix_str)[0]}help <命令>\" 以-查看特定命令的-帮助。** [源代码]("
+                                     f"https://t.me/PagerMaid_Modify)",
                        disable_web_page_preview=True)
