@@ -10,19 +10,27 @@ from os import remove
 
 async def execute(command, pass_error=True):
     """ Executes command and returns output, with the option of enabling stderr. """
-    executor = await create_subprocess_shell(
-        command,
-        stdout=PIPE,
-        stderr=PIPE,
-        stdin=PIPE
-    )
+    if not platform == 'win32':
+        executor = await create_subprocess_shell(
+            command,
+            stdout=PIPE,
+            stderr=PIPE,
+            stdin=PIPE
+        )
 
-    stdout, stderr = await executor.communicate()
-    if pass_error:
-        result = str(stdout.decode().strip()) \
-                 + str(stderr.decode().strip())
+        stdout, stderr = await executor.communicate()
+        if pass_error:
+            result = str(stdout.decode().strip()) \
+                     + str(stderr.decode().strip())
+        else:
+            result = str(stdout.decode().strip())
     else:
-        result = str(stdout.decode().strip())
+        import subprocess
+        subprocess.Popen('dir', shell=True)
+        sub = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+        sub.wait()
+        stdout = sub.communicate()
+        result = str(stdout[0].decode('gbk').strip())
     return result
 
 
@@ -61,15 +69,7 @@ async def sh(client, message):
         f"\n> `$` {command}"
     )
 
-    if not platform == 'win32':
-        result = await execute(command)
-    else:
-        import subprocess
-        subprocess.Popen('dir', shell=True)
-        sub = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-        sub.wait()
-        stdout = sub.communicate()
-        result = str(stdout[0].decode('gbk').strip())
+    result = await execute(command)
 
     if result:
         if len(result) > 4096:
