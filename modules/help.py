@@ -13,13 +13,13 @@ async def help_com(client, message):
         if command in cmd:
             parameters = par[cmd.index(command)]
             description = des[cmd.index(command)]
-            await message.edit(f'**Beta 使用方法:** `{list(prefix_str)[0]}{command} {parameters}`\
+            await message.edit(f'**使用方法:** `{list(prefix_str)[0]}{command} {parameters}`\
             \n{description}')
             return
         else:
             await message.edit("无效的参数")
             return
-    result = "**命令列表: \n**"
+    result = "**Beta 命令列表: \n**"
     for command in cmd:
         result += "`" + str(command)
         result += "`, "

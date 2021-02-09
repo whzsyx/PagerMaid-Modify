@@ -66,7 +66,7 @@ async def upload_attachment(client, file_path, chat_id, reply_id, caption=None):
     return True
 
 
-def check_plugin(name):
+def check_plugin(name, version):
     active_plugin = sorted(__list_plugins())
     disabled_plugins = []
     chdir("modules/plugins/")
@@ -77,6 +77,27 @@ def check_plugin(name):
         return True
     else:
         return False
+
+
+def check_require(name, version):
+    if check_plugin(name):
+        plugin_directory = f"{working_dir}/modules/plugins/"
+        if exists(f"{plugin_directory}version.json"):
+            with open(f"{plugin_directory}version.json", 'r', encoding="utf-8") as f:
+                version_json = json.load(f)
+            try:
+                plugin_version = version_json[name]
+            except:
+                plugin_version = 9999999.0
+        else:
+            plugin_version = 9999999.0
+        if plugin_version >= version:
+            return True, ''
+        else:
+            return False, f"必须依赖：**incoming** 版本过低 (<{version})，" \
+                          f"请先使用 `{list(prefix_str)[0]}apt install incoming` 来更新插件必须依赖。"
+    else:
+        return False, f"必须依赖：**incoming** 未安装，请先使用 `{list(prefix_str)[0]}apt install incoming` 来安装插件必须依赖。"
 
 
 cmd.extend(['apt'])
