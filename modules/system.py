@@ -94,5 +94,5 @@ des.extend(['使 PagerMaid-Modify 重新启动。'])
 async def restart(client, message):
     """ To re-execute PagerMaid. """
     if not message.text[0].isalpha():
-        await message.edit("尝试重新启动 PagerMaid-Modify 。")
+        await message.edit("尝试重新启动 PagerMaid-Modify Beta 。")
         exit()

@@ -122,6 +122,7 @@ docker-compose.yml
 modules/plugins/*.py
 modules/plugins/*.py.disabled
 data/*
+log
 pagermaid.egg-info/
 
 # Spyder project settings
