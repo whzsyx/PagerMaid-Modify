@@ -91,7 +91,7 @@ def check_require(name, version):
                 plugin_version = 9999999.0
         else:
             plugin_version = 9999999.0
-        if plugin_version >= version:
+        if plugin_version >= version or version == 0.0:
             return True, ''
         else:
             return False, f"必须依赖：**incoming** 版本过低 (<{version})，" \
