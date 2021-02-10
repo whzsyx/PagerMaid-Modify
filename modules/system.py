@@ -73,7 +73,7 @@ async def sh(client, message):
 
     if result:
         if len(result) > 4096:
-            await attach_log(client, result, message.chat_id, "output.log", message.message_id)
+            await attach_log(client, result, message.chat.id, "output.log", message.message_id)
             return
 
         await message.edit(
