@@ -1,4 +1,5 @@
 import json
+from time import localtime, strftime
 from requests import get
 from pyrogram import Client, filters
 from main import cmd, par, des, prefix_str
@@ -45,8 +46,8 @@ async def userid(client, message):
             text += "\nusername: @" + msg.from_user.username
         if msg.from_user.language_code:
             text += "\nlanguage_code: `" + msg.from_user.language_code + "`"
-        if msg.forward_from:
-            if str(msg.forward_from_chat.id).startswith('-100'):
+        if msg.forward_date:
+            if msg.forward_from_chat:
                 text += "\n\n**Forward From Channel**\nid: `" + str(
                     msg.forward_from_chat.id) + "`\ntitle: `" + msg.forward_from_chat.title + "`"
                 if msg.forward_from_chat.username:
@@ -54,7 +55,10 @@ async def userid(client, message):
                 text += "\nmessage_id: `" + str(msg.forward_from_message_id) + "`"
                 if msg.forward_signature:
                     text += "\npost_author: `" + msg.forward_signature + "`"
-                text += "\ndate: `" + str(msg.forward_date) + "`"
+                # 格式化 data ，请注意 vps 时区
+                times = localtime(msg.forward_date)
+                times = strftime("%Y-%m-%d %H:%M:%S", times)
+                text += "\ndate: `" + str(times) + "`"
             else:
                 if msg.forward_from:
                     text += "\n\n**Forward From User**\nid: `" + str(
@@ -71,7 +75,15 @@ async def userid(client, message):
                         text += "\nusername: @" + msg.forward_from.username
                     if msg.forward_from.language_code:
                         text += "\nlanguage_code: `" + msg.forward_from.language_code + "`"
-                    text += "\ndate: `" + str(msg.forward_date) + "`"
+                    times = localtime(msg.forward_date)
+                    times = strftime("%Y-%m-%d %H:%M:%S", times)
+                    text += "\ndate: `" + str(times) + "`"
+                elif msg.forward_sender_name:
+                    text += "\n\n**Forward From User**\nname: `" + str(
+                        msg.forward_sender_name) + "`"
+                    times = localtime(msg.forward_date)
+                    times = strftime("%Y-%m-%d %H:%M:%S", times)
+                    text += "\ndate: `" + str(times) + "`"
     await message.edit(text)
 
 
