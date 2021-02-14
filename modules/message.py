@@ -17,6 +17,7 @@ async def userid(client, message):
     text += "**Chat**\nid:`" + str(message.chat.id) + "`\n"
     msg_from = message.chat if message.chat else (await message.get_chat())
     if message.chat.type == 'private' or message.chat.type == 'bot':
+        msg_from = await client.get_users(message.chat.id)
         try:
             text += "first_name: `" + msg_from.first_name + "`\n"
         except TypeError:
