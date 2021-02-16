@@ -1,6 +1,6 @@
 from struct import error as StructError
 from os import remove
-from main import reg_handler, des_handler, par_handler
+from main import bot, reg_handler, des_handler, par_handler
 
 
 async def profile(message, args, origin_text):
@@ -19,15 +19,15 @@ async def profile(message, args, origin_text):
             if user.isnumeric():
                 user = int(user)
         else:
-            user_object = await client.get_me()
+            user_object = await bot.get_me()
             user = user_object.id
         if message.entities is not None:
             if message.mentioned:
                 user_object = message.entities[0].user
                 user = user_object.id
         try:
-            user_object = await client.get_users(user)
-            target_user = await client.get_users(user_object.id)
+            user_object = await bot.get_users(user)
+            target_user = await bot.get_users(user_object.id)
         except (TypeError, ValueError, OverflowError, StructError) as exception:
             if str(exception).startswith("Cannot find any entity corresponding to"):
                 await message.edit("出错了呜呜呜 ~ 指定的用户不存在。")
@@ -61,14 +61,14 @@ async def profile(message, args, origin_text):
               f"类型: {user_type} \n" \
               f"[{first_name}](tg://user?id={target_user.id})"
     try:
-        photo = await client.get_profile_photos(target_user.id, limit=1)
-        photo = await client.download_media(photo[0].file_id, 'photo.jpg')
+        photo = await bot.get_profile_photos(target_user.id, limit=1)
+        photo = await bot.download_media(photo[0].file_id, 'photo.jpg')
     except:
         pass
     try:
         reply_to = message.reply_to_message.message_id
         try:
-            await client.send_photo(
+            await bot.send_photo(
                 message.chat.id,
                 'downloads/photo.jpg',
                 caption=caption,
@@ -84,7 +84,7 @@ async def profile(message, args, origin_text):
             await message.edit(caption)
     except:
         try:
-            await client.send_photo(
+            await bot.send_photo(
                 message.chat.id,
                 'downloads/photo.jpg',
                 caption=caption
