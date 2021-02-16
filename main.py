@@ -93,6 +93,7 @@ async def handle_text(client, message):
         for prefix in list(prefix_str):
             if text.split()[0] == (prefix + 'apt'):
                 await handler_map['apt'](message, fail_list, text)
+                return
             elif text.split()[0] == (prefix + command):
                 await handler_map[command](message, args, text)
             elif text.startswith(prefix + 'help'):
