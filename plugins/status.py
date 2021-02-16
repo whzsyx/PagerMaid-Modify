@@ -36,7 +36,7 @@ async def status(message, args, origin_text):
         f"主机平台: `{platform}` \n"
         f"Kernel 版本: `{uname().release}` \n"
         f"Python 版本: `{python_version()}` \n"
-        f"Library 版本: `{__version__}` \n"
+        f"Pyrogram 版本: `{__version__}` \n"
         f"Redis 状态: `{redis_con}`\n"
         f"对话总数: `{dialogs_count}`"
     )

@@ -79,7 +79,7 @@ async def handle_text(client, message):
 
     for command in handler_map:
         for prefix in list(prefix_str):
-            if text.startswith(prefix + command):
+            if text.split()[0] == (prefix + command):
                 await handler_map[command](message, args, text)
             elif text.startswith(prefix + 'help'):
                 if len(message.text.split()) == 2:
