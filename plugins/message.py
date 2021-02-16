@@ -1,23 +1,17 @@
 import json
 from time import localtime, strftime
 from requests import get
-from pyrogram import Client, filters
-from main import cmd, par, des, prefix_str
-
-cmd.extend(['id'])
-par.extend([''])
-des.extend(['获取一条消息的各种信息。'])
+from main import bot, reg_handler, des_handler, par_handler
 
 
-@Client.on_message(filters.me & filters.command('id', list(prefix_str)))
-async def userid(client, message):
+async def userid(message, args, origin_text):
     """ Query the UserID of the sender of the message you replied to. """
     msg = message.reply_to_message
     text = "Message ID: `" + str(message.message_id) + "`\n\n"
     text += "**Chat**\nid:`" + str(message.chat.id) + "`\n"
     msg_from = message.chat if message.chat else (await message.get_chat())
     if message.chat.type == 'private' or message.chat.type == 'bot':
-        msg_from = await client.get_users(message.chat.id)
+        msg_from = await bot.get_users(message.chat.id)
         try:
             text += "first_name: `" + msg_from.first_name + "`\n"
         except TypeError:
@@ -88,13 +82,7 @@ async def userid(client, message):
     await message.edit(text)
 
 
-cmd.extend(['re'])
-par.extend(['<次数>'])
-des.extend(['在当前会话复读回复的消息。（需要回复一条消息）'])
-
-
-@Client.on_message(filters.me & filters.command('re', list(prefix_str)))
-async def re(client, message):
+async def re(message, args, origin_text):
     """ Forwards a message into this group """
     reply = message.reply_to_message
     if reply:
@@ -111,18 +99,12 @@ async def re(client, message):
                 return True
         await message.delete()
         for nums in range(0, num):
-            await client.forward_messages(message.chat.id, message.chat.id, reply.message_id)
+            await bot.forward_messages(message.chat.id, message.chat.id, reply.message_id)
     else:
         await message.edit("出错了呜呜呜 ~ 您好像没有回复一条消息。")
 
 
-cmd.extend(['hitokoto'])
-par.extend([''])
-des.extend(['每日一言。'])
-
-
-@Client.on_message(filters.me & filters.command('hitokoto', list(prefix_str)))
-async def hitokoto(client, message):
+async def hitokoto(message, args, origin_text):
     """ Get hitokoto.cn """
     hitokoto_while = 1
     try:
@@ -139,3 +121,13 @@ async def hitokoto(client, message):
     hitokoto_type_list = ['动画', '漫画', '游戏', '文学', '原创', '来自网络', '其他', '影视', '诗词', '网易云', '哲学', '抖机灵']
     hitokoto_type = hitokoto_type_list[hitokoto_json_list.index(hitokoto_json['type'])]
     await message.edit(f"{hitokoto_json['hitokoto']} - {hitokoto_json['from']}（{str(hitokoto_type)}）")
+
+reg_handler('id', userid)
+reg_handler('re', re)
+reg_handler('hitokoto', hitokoto)
+des_handler('id', '获取一条消息的各种信息。')
+des_handler('re', '在当前会话复读回复的消息。（需要回复一条消息）')
+des_handler('hitokoto', '每日一言。')
+par_handler('id', '')
+par_handler('re', '<次数>')
+par_handler('hitokoto', '')

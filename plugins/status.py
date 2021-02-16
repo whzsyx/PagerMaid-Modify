@@ -1,6 +1,6 @@
-from pyrogram import Client, filters, __version__
-from main import cmd, par, des, prefix_str, redis
-from modules.system import execute
+from pyrogram import __version__
+from main import bot, reg_handler, des_handler, par_handler, redis
+from plugins.system import execute
 from platform import python_version, uname
 from sys import platform
 from speedtest import Speedtest
@@ -16,13 +16,8 @@ from psutil import boot_time, virtual_memory, disk_partitions
 from shutil import disk_usage
 from subprocess import Popen, PIPE
 
-cmd.extend(['sysinfo'])
-par.extend([''])
-des.extend(['通过 neofetch 检索系统信息。'])
 
-
-@Client.on_message(filters.me & filters.command('sysinfo', list(prefix_str)))
-async def sysinfo(client, message):
+async def sysinfo(message, args, origin_text):
     """ Retrieve system information via neofetch. """
     await message.edit("加载系统信息中 . . .")
     if platform == 'win32':
@@ -32,15 +27,9 @@ async def sysinfo(client, message):
     await message.edit(f"`{result}`")
 
 
-cmd.extend(['status'])
-par.extend([''])
-des.extend(['输出 PagerMaid-Modify 的运行状态。'])
-
-
-@Client.on_message(filters.me & filters.command('status', list(prefix_str)))
-async def status(client, message):
+async def status(message, args, origin_text):
     redis_con = '在线' if redis_status() else "离线"
-    dialogs_count = await client.get_dialogs_count()
+    dialogs_count = await bot.get_dialogs_count()
     await message.edit(
         f"**PagerMaid-Modify Beta 运行状态** \n"
         f"主机名: `{uname().node}` \n"
@@ -53,13 +42,7 @@ async def status(client, message):
     )
 
 
-cmd.extend(['speedtest'])
-par.extend([''])
-des.extend(['执行 speedtest 脚本并发送结果。'])
-
-
-@Client.on_message(filters.me & filters.command('speedtest', list(prefix_str)))
-async def speedtest(client, message):
+async def speedtest(message, args, origin_text):
     """ Tests internet speed using speedtest. """
     await message.edit("执行测试脚本 . . .")
     test = Speedtest()
@@ -77,13 +60,7 @@ async def speedtest(client, message):
     )
 
 
-cmd.extend(['ping'])
-par.extend([''])
-des.extend(['计算运行 PagerMaid-Modify 的服务器和 Telegram 服务器之间的延迟。'])
-
-
-@Client.on_message(filters.me & filters.command('ping', list(prefix_str)))
-async def ping(client, message):
+async def ping(message, args, origin_text):
     """ Calculates latency between PagerMaid and Telegram. """
     start = datetime.now()
     await message.edit("Pong!")
@@ -92,13 +69,7 @@ async def ping(client, message):
     await message.edit(f"Pong!|{duration}")
 
 
-cmd.extend(['topcloud'])
-par.extend([''])
-des.extend(['生成一张资源占用的词云图片。'])
-
-
-@Client.on_message(filters.me & filters.command('topcloud', list(prefix_str)))
-async def topcloud(client, message):
+async def topcloud(message, args, origin_text):
     """ Generates a word cloud of resource-hungry processes. """
     if platform == 'win32':
         await message.edit(f"此命令暂不支持 win 系统。")
@@ -159,7 +130,7 @@ async def topcloud(client, message):
 
     cloud.to_file("cloud.png")
     await message.edit("正在上传图片中 . . .")
-    await client.send_photo(
+    await bot.send_photo(
         message.chat.id,
         "cloud.png",
         caption="正在运行的进程。"
@@ -291,3 +262,20 @@ def neofetch_win():
            f'Motherboard: {mboard}\nCPU: {cpu}\nGPU: {gpu}\nMemory: {ram}\n' \
            f'Disk:\n{disks}</code>'
     return text
+
+
+reg_handler('sysinfo', sysinfo)
+reg_handler('status', status)
+reg_handler('speedtest', speedtest)
+reg_handler('ping', ping)
+reg_handler('topcloud', topcloud)
+des_handler('sysinfo', '通过 neofetch 检索系统信息。')
+des_handler('status', '输出 PagerMaid-Modify 的运行状态。')
+des_handler('speedtest', '执行 speedtest 脚本并发送结果。')
+des_handler('ping', '计算运行 PagerMaid-Modify 的服务器和 Telegram 服务器之间的延迟。')
+des_handler('topcloud', '生成一张资源占用的词云图片。')
+par_handler('sysinfo', '')
+par_handler('status', '')
+par_handler('speedtest', '')
+par_handler('ping', '')
+par_handler('topcloud', '')

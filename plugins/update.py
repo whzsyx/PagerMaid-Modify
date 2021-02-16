@@ -6,17 +6,11 @@ from datetime import datetime
 from os import remove
 from git import Repo
 from git.exc import GitCommandError, InvalidGitRepositoryError, NoSuchPathError
-from pyrogram import Client, filters
-from main import cmd, par, des, prefix_str
-from modules.system import execute
-
-cmd.extend(['update'])
-par.extend(['<true/debug>'])
-des.extend(['从远程来源检查更新，并将其安装到 PagerMaid-Modify。'])
+from main import bot, reg_handler, des_handler, par_handler, prefix_str
+from plugins.system import execute
 
 
-@Client.on_message(filters.me & filters.command('update', list(prefix_str)))
-async def update(client, message):
+async def update(message, args, origin_text):
     if len(message.text.split()) > 2:
         await message.edit("无效的参数。")
         return
@@ -83,7 +77,7 @@ async def update(client, message):
             file = open("output.log", "w+")
             file.write(changelog_str)
             file.close()
-            await client.send_document(
+            await bot.send_document(
                 message.chat.id,
                 "output.log",
                 reply_to_message_id=message.message_id,
@@ -133,3 +127,8 @@ async def branch_check(branch):
     if branch in official:
         return 1
     return
+
+
+reg_handler('update', update)
+des_handler('update', '从远程来源检查更新，并将其安装到 PagerMaid-Modify。')
+par_handler('update', '<true/debug>')

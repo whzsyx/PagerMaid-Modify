@@ -2,17 +2,10 @@
 
 from datetime import datetime
 from pytz import country_names, country_timezones, timezone
-from pyrogram import Client, filters
-from main import cmd, par, des, prefix_str
+from main import reg_handler, des_handler, par_handler
 
 
-cmd.extend(['time'])
-par.extend(['<地区>'])
-des.extend(['显示特定区域的时间，如果参数为空，则默认显示中国。'])
-
-
-@Client.on_message(filters.me & filters.command('time', list(prefix_str)))
-async def time(client, message):
+async def time(message, args, origin_text):
     """ For querying time. """
     if len(message.text.split()) > 2:
         await message.edit("出错了呜呜呜 ~ 无效的参数。")
@@ -70,3 +63,8 @@ async def get_timezone(target):
             return timezone(country_timezones[target][0])
     except KeyError:
         return
+
+
+reg_handler('time', time)
+des_handler('time', '显示特定区域的时间，如果参数为空，则默认显示中国。')
+par_handler('time', '<地区>')

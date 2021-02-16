@@ -8,15 +8,14 @@ from os.path import exists, basename, isfile
 from sys import exit
 from shutil import copyfile, move
 from glob import glob
-from pyrogram import Client, filters
-from main import cmd, par, des, prefix_str
+from main import bot, reg_handler, des_handler, par_handler
 
 working_dir = getcwd()
 
 
 def move_plugin(file_path):
     file_path = file_path.replace(f'{working_dir}/', '')
-    plugin_directory = f"{working_dir}/modules/plugins/"
+    plugin_directory = f"{working_dir}/plugins/plugins/"
     if exists(f"{plugin_directory}{file_path}"):
         remove(f"{plugin_directory}{file_path}")
         move(file_path, plugin_directory)
@@ -28,7 +27,7 @@ def move_plugin(file_path):
 
 
 def update_version(file_path, plugin_content, plugin_name, version):
-    plugin_directory = f"{working_dir}/modules/plugins/"
+    plugin_directory = f"{working_dir}/plugins/plugins/"
     with open(file_path, 'wb') as f:
         f.write(plugin_content)
     with open(f"{plugin_directory}version.json", 'r', encoding="utf-8") as f:
@@ -39,9 +38,9 @@ def update_version(file_path, plugin_content, plugin_name, version):
 
 
 def __list_plugins():
-    plugin_paths = glob(f"{getcwd()}/modules/plugins" + "/*.py")
-    if not exists(f"{getcwd()}/modules/plugins"):
-        makedirs(f"{getcwd()}/modules/plugins")
+    plugin_paths = glob(f"{getcwd()}/plugins/plugins" + "/*.py")
+    if not exists(f"{getcwd()}/plugins/plugins"):
+        makedirs(f"{getcwd()}/plugins/plugins")
     result = [
         basename(file)[:-3]
         for file in plugin_paths
@@ -50,12 +49,12 @@ def __list_plugins():
     return result
 
 
-async def upload_attachment(client, file_path, chat_id, reply_id, caption=None):
+async def upload_attachment(bot, file_path, chat_id, reply_id, caption=None):
     """ Uploads a local attachment file. """
     if not exists(file_path):
         return False
     try:
-        await client.send_document(
+        await bot.send_document(
             chat_id,
             file_path,
             reply_to_message_id=reply_id,
@@ -69,7 +68,7 @@ async def upload_attachment(client, file_path, chat_id, reply_id, caption=None):
 def check_plugin(name):
     active_plugin = sorted(__list_plugins())
     disabled_plugins = []
-    chdir("modules/plugins/")
+    chdir("plugins/plugins/")
     for target_plugin in glob(f"*.py.disabled"):
         disabled_plugins += [f"{target_plugin[:-12]}"]
     chdir(working_dir)
@@ -81,7 +80,7 @@ def check_plugin(name):
 
 def check_require(name, version):
     if check_plugin(name):
-        plugin_directory = f"{working_dir}/modules/plugins/"
+        plugin_directory = f"{working_dir}/plugins/plugins/"
         if exists(f"{plugin_directory}version.json"):
             with open(f"{plugin_directory}version.json", 'r', encoding="utf-8") as f:
                 version_json = json.load(f)
@@ -100,24 +99,20 @@ def check_require(name, version):
         return False, f"必须依赖：**incoming** 未安装，请先使用 `{list(prefix_str)[0]}apt install incoming` 来安装插件必须依赖。"
 
 
-cmd.extend(['apt'])
-par.extend(['{update|search|show|status|install|remove|enable|disable|upload} <插件名称/文件>'])
-des.extend(['用于管理安装到 PagerMaid-Modify 的插件。'])
 active_plugins = sorted(__list_plugins())
 
 
-@Client.on_message(filters.me & filters.command('apt', list(prefix_str)))
-async def plugin(client, message):
+async def plugin(message, args, origin_text):
     if len(message.text.split()) == 1:
         await message.edit("出错了呜呜呜 ~ 无效的参数。")
         return
     reply = message.reply_to_message
-    plugin_directory = f"{working_dir}/modules/plugins/"
+    plugin_directory = f"{working_dir}/plugins/plugins/"
     if message.text.split()[1] == "install":
         if len(message.text.split()) == 2:
             await message.edit("安装插件中 . . .")
             if reply:
-                file_path = await client.download_media(reply, file_name=f'{working_dir}/{reply.document.file_name}')
+                file_path = await bot.download_media(reply, file_name=f'{working_dir}/{reply.document.file_name}')
             else:
                 file_path = await message.download_media(file_name=f'{working_dir}/{message.document.file_name}')
             if file_path is None or not file_path.endswith('.py'):
@@ -230,7 +225,7 @@ async def plugin(client, message):
             if not len(inactive_plugins) == 0:
                 for target_plugin in active_plugins:
                     inactive_plugins.remove(target_plugin)
-            chdir("modules/plugins/")
+            chdir("plugins/plugins/")
             for target_plugin in glob(f"*.py.disabled"):
                 disabled_plugins += [f"{target_plugin[:-12]}"]
             chdir(working_dir)
@@ -293,7 +288,7 @@ async def plugin(client, message):
                 copyfile(f"{plugin_directory}{file_name}.disabled", file_name)
             if exists(file_name):
                 await message.edit("上传插件中 . . .")
-                await upload_attachment(client, file_name, message.chat.id, reply_id,
+                await upload_attachment(bot, file_name, message.chat.id, reply_id,
                                         caption=f"PagerMaid-Modify {message.text.split()[2]} plugin.")
                 remove(file_name)
                 await message.delete()
@@ -336,7 +331,7 @@ async def plugin(client, message):
             else:
                 print(6)
                 await message.edit('正在读取云端插件列表...完成\n正在读取本地插件版本信息...完成\n正在更新插件...')
-                plugin_directory = f"{working_dir}/modules/plugins/"
+                plugin_directory = f"{working_dir}/plugins/plugins/"
                 for i in need_update_list:
                     file_path = i + ".py"
                     plugin_content = get(
@@ -352,7 +347,7 @@ async def plugin(client, message):
                         json.dump(version_json, f)
                     move_plugin(file_path)
                 await message.edit('正在读取云端插件列表...完成\n正在读取本地插件版本信息...完成\n' + need_update)
-                await message.client.disconnect()
+                await message.bot.disconnect()
     elif message.text.split()[1] == "search":
         if len(message.text.split()) == 2:
             await message.edit("没插件名我怎么搜索？")
@@ -399,3 +394,8 @@ async def plugin(client, message):
                 await message.edit(search_result)
     else:
         await message.edit("出错了呜呜呜 ~ 无效的参数。")
+
+
+reg_handler('apt', plugin)
+des_handler('apt', '用于管理安装到 PagerMaid-Modify 的插件。')
+par_handler('apt', '{update|search|show|status|install|remove|enable|disable|upload} <插件名称/文件>')

@@ -8,19 +8,14 @@ from urllib import request
 from io import BytesIO
 from PIL import Image
 from math import floor
-from pyrogram import Client, filters
-from main import cmd, par, des, prefix_str
+from main import bot, reg_handler, des_handler, par_handler
 
-cmd.extend(['sticker'])
-par.extend(['<emoji>'])
-des.extend(['收集回复的图像/贴纸作为贴纸，通过参数指定 emoji 以设置非默认的 emoji。'])
 sticker_process = False
 
 
-@Client.on_message(filters.me & filters.command('sticker', list(prefix_str)))
-async def sticker(client, message):
+async def sticker(message, args, origin_text):
     """ Fetches images/stickers and add them to your pack. """
-    user = await client.get_me()
+    user = await bot.get_me()
     if not user.username:
         user.username = user.first_name
     msg = message.reply_to_message
@@ -32,7 +27,7 @@ async def sticker(client, message):
     except:
         pass
     if msg and (msg.document or msg.photo or msg.sticker):
-        photo = await client.download_media(msg)
+        photo = await bot.download_media(msg)
         try:
             await message.edit("下载图片中 . . .")
         except:
@@ -98,11 +93,11 @@ async def sticker(client, message):
             for _ in range(20):  # 最多重试20次
                 if not sticker_process:
                     try:
-                        await client.send_message('Stickers', '/addsticker')
-                        await client.read_history('Stickers')
-                        await client.send_message('Stickers', pack_name)
-                        await client.read_history('Stickers')
-                        async for msg in client.iter_history('Stickers', limit=1):
+                        await bot.send_message('Stickers', '/addsticker')
+                        await bot.read_history('Stickers')
+                        await bot.send_message('Stickers', pack_name)
+                        await bot.read_history('Stickers')
+                        async for msg in bot.iter_history('Stickers', limit=1):
                             chat_response = msg
                         while chat_response.text == "Whoa! That's probably enough stickers for one pack, give it a break. \
                                             A pack can't have more than 120 stickers at the moment.":
@@ -113,12 +108,12 @@ async def sticker(client, message):
                                 await message.edit("切换到私藏 " + str(pack) + " 上一个贴纸包已满 . . .")
                             except:
                                 pass
-                            await client.send_message('Stickers', pack_name)
-                            await client.read_history('Stickers')
-                            async for msg in client.iter_history('Stickers', limit=1):
+                            await bot.send_message('Stickers', pack_name)
+                            await bot.read_history('Stickers')
+                            async for msg in bot.iter_history('Stickers', limit=1):
                                 chat_response = msg
                             if chat_response.text == "Invalid pack selected.":
-                                await add_sticker(client, command, pack_title, pack_name, animated, message,
+                                await add_sticker(bot, command, pack_title, pack_name, animated, message,
                                                   file, emoji, photo)
                                 try:
                                     await message.edit(
@@ -126,12 +121,12 @@ async def sticker(client, message):
                                 except:
                                     pass
                                 return
-                        await upload_sticker(client, animated, message, file, photo)
-                        await client.read_history('Stickers')
-                        await client.send_message('Stickers', emoji)
-                        await client.read_history('Stickers')
-                        await client.send_message('Stickers', '/done')
-                        await client.read_history('Stickers')
+                        await upload_sticker(bot, animated, message, file, photo)
+                        await bot.read_history('Stickers')
+                        await bot.send_message('Stickers', emoji)
+                        await bot.read_history('Stickers')
+                        await bot.send_message('Stickers', '/done')
+                        await bot.read_history('Stickers')
                         break
                     except Exception:
                         raise
@@ -150,8 +145,8 @@ async def sticker(client, message):
                 await message.edit("贴纸包不存在，正在创建 . . .")
             except:
                 pass
-            async with client.conversation('Stickers') as conversation:
-                await add_sticker(client, command, pack_title, pack_name, animated, message,
+            async with bot.conversation('Stickers') as conversation:
+                await add_sticker(bot, command, pack_title, pack_name, animated, message,
                                   file, emoji, photo)
 
         try:
@@ -166,32 +161,32 @@ async def sticker(client, message):
             pass
 
 
-async def add_sticker(client, command, pack_title, pack_name, animated, message, file, emoji, photo):
-    await client.send_message('Stickers', command)
-    await client.read_history('Stickers')
-    await client.send_message('Stickers', pack_title)
-    await client.read_history('Stickers')
-    await upload_sticker(client, animated, message, file, photo)
-    await client.read_history('Stickers')
-    await client.send_message('Stickers', emoji)
-    await client.read_history('Stickers')
-    await client.send_message('Stickers', "/publish")
-    await client.read_history('Stickers')
+async def add_sticker(bot, command, pack_title, pack_name, animated, message, file, emoji, photo):
+    await bot.send_message('Stickers', command)
+    await bot.read_history('Stickers')
+    await bot.send_message('Stickers', pack_title)
+    await bot.read_history('Stickers')
+    await upload_sticker(bot, animated, message, file, photo)
+    await bot.read_history('Stickers')
+    await bot.send_message('Stickers', emoji)
+    await bot.read_history('Stickers')
+    await bot.send_message('Stickers', "/publish")
+    await bot.read_history('Stickers')
     if animated:
-        await client.send_message('Stickers', f"<{pack_title}>")
-    await client.send_message('Stickers', "/skip")
-    await client.read_history('Stickers')
-    await client.send_message('Stickers', pack_name)
-    await client.read_history('Stickers')
+        await bot.send_message('Stickers', f"<{pack_title}>")
+    await bot.send_message('Stickers', "/skip")
+    await bot.read_history('Stickers')
+    await bot.send_message('Stickers', pack_name)
+    await bot.read_history('Stickers')
 
 
-async def upload_sticker(client, animated, message, file, photo):
+async def upload_sticker(bot, animated, message, file, photo):
     if animated:
         try:
             await message.edit("上传动图中 . . .")
         except:
             pass
-        await client.send_document("Stickers", photo)
+        await bot.send_document("Stickers", photo)
         remove(photo)
     else:
         file.seek(0)
@@ -199,7 +194,7 @@ async def upload_sticker(client, animated, message, file, photo):
             await message.edit("上传图片中 . . .")
         except:
             pass
-        await client.send_document("Stickers", file)
+        await bot.send_document("Stickers", file)
 
 
 async def resize_image(photo):
@@ -224,3 +219,8 @@ async def resize_image(photo):
         image.thumbnail(maxsize)
 
     return image
+
+
+reg_handler('sticker', sticker)
+des_handler('sticker', '收集回复的图像/贴纸作为贴纸，通过参数指定 emoji 以设置非默认的 emoji。')
+par_handler('sticker', '<emoji>')

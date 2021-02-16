@@ -1,5 +1,4 @@
-from pyrogram import Client, filters
-from main import cmd, par, des, prefix_str
+from main import bot, reg_handler, des_handler, par_handler
 from sys import exit, platform
 from asyncio import create_subprocess_shell
 from asyncio.subprocess import PIPE
@@ -48,13 +47,7 @@ async def attach_log(client, plaintext, chat_id, file_name, reply_id=None, capti
     remove(file_name)
 
 
-cmd.extend(['sh'])
-par.extend(['<命令>'])
-des.extend(['在 Telegram 上远程执行 Shell 命令。'])
-
-
-@Client.on_message(filters.me & filters.command('sh', list(prefix_str)))
-async def sh(client, message):
+async def sh(message, args, origin_text):
     """ Use the command-line from Telegram. """
     user = getuser()
     command = message.text[4:]
@@ -73,7 +66,7 @@ async def sh(client, message):
 
     if result:
         if len(result) > 4096:
-            await attach_log(client, result, message.chat.id, "output.log", message.message_id)
+            await attach_log(bot, result, message.chat.id, "output.log", message.message_id)
             return
 
         await message.edit(
@@ -85,14 +78,16 @@ async def sh(client, message):
         return
 
 
-cmd.extend(['restart'])
-par.extend([''])
-des.extend(['使 PagerMaid-Modify 重新启动。'])
-
-
-@Client.on_message(filters.me & filters.command('restart', list(prefix_str)))
-async def restart(client, message):
+async def restart(message, args, origin_text):
     """ To re-execute PagerMaid. """
     if not message.text[0].isalpha():
         await message.edit("尝试重新启动 PagerMaid-Modify Beta 。")
         exit()
+
+
+reg_handler('sh', sh)
+reg_handler('restart', restart)
+des_handler('sh', '在 Telegram 上远程执行 Shell 命令。')
+des_handler('restart', '使 PagerMaid-Modify 重新启动。')
+par_handler('sh', '<命令>')
+par_handler('restart', '')

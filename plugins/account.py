@@ -1,16 +1,9 @@
-from pyrogram import Client, filters
-from main import cmd, par, des, prefix_str
 from struct import error as StructError
 from os import remove
+from main import reg_handler, des_handler, par_handler
 
 
-cmd.extend(['profile'])
-par.extend(['<username>'])
-des.extend(['生成一位用户简介 ~ 消息有点长。'])
-
-
-@Client.on_message(filters.me & filters.command('profile', list(prefix_str)))
-async def profile(client, message):
+async def profile(message, args, origin_text):
     """ Queries profile of a user. """
     if len(message.text.split()) > 2:
         await message.edit("出错了呜呜呜 ~ 无效的参数。")
@@ -104,3 +97,8 @@ async def profile(client, message):
             return
         except TypeError:
             await message.edit(caption)
+
+
+reg_handler('profile', profile)
+des_handler('profile', '生成一位用户简介 ~ 消息有点长。')
+par_handler('profile', '<username>')
