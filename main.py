@@ -36,6 +36,7 @@ bot = Client("pagermaid", ipv6=ipv6)
 handler_map: Dict[str, Callable[[Message, List[str], str], Awaitable[None]]] = {}
 des_map: Dict[str, str] = {}
 par_map: Dict[str, str] = {}
+fail_list: List = []
 
 
 if os.path.exists('modules/plugins'):
@@ -75,7 +76,7 @@ def par_handler(cmd: str, par: str) -> None:
     par_map[cmd] = par
 
 
-@bot.on_message(filters.me)
+@bot.on_message(filters.me & filters.text)
 async def handle_text(client, message):
     global handler_map
     text = message.text
@@ -90,7 +91,9 @@ async def handle_text(client, message):
 
     for command in handler_map:
         for prefix in list(prefix_str):
-            if text.split()[0] == (prefix + command):
+            if text.split()[0] == (prefix + 'apt status'):
+                await handler_map[command](message, fail_list, text)
+            elif text.split()[0] == (prefix + command):
                 await handler_map[command](message, args, text)
             elif text.startswith(prefix + 'help'):
                 if len(message.text.split()) == 2:
@@ -105,16 +108,19 @@ async def handle_text(client, message):
                         await message.edit("无效的参数")
                         return
                 result = "**Beta 命令列表: **\n"
-                for command in handler_map:
-                    result += "`" + str(command)
+                for h in handler_map:
+                    result += "`" + str(h)
                     result += "`, "
                 await message.edit(result[:-2] + f"\n**发送 \"{list(prefix_str)[0]}help <命令>\" 以-查看特定命令的-帮助。** [源代码]("
-                                                 f"https://t.me/PagerMaid_Modify)",disable_web_page_preview=True)
+                                                 f"https://t.me/PagerMaid_Modify)", disable_web_page_preview=True)
 
 
 if __name__ == "__main__":
     for module_path in sorted(Path('plugins'.replace(".", "/")).rglob("*.py")):
         with open(module_path, "r", encoding="utf-8") as f:
             module_content = f.read()
-            exec(module_content)
+            try:
+                exec(module_content)
+            except:
+                fail_list.append(os.path.split(module_path)[1][:3])
     bot.run()

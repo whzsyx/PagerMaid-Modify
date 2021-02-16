@@ -235,7 +235,7 @@ async def plugin(message, args, origin_text):
             for target_plugin in active_plugins:
                 active_plugins_string += f"{target_plugin}, "
             active_plugins_string = active_plugins_string[:-2]
-            for target_plugin in inactive_plugins:
+            for target_plugin in args:
                 inactive_plugins_string += f"{target_plugin}, "
             inactive_plugins_string = inactive_plugins_string[:-2]
             for target_plugin in disabled_plugins:
@@ -243,7 +243,7 @@ async def plugin(message, args, origin_text):
             disabled_plugins_string = disabled_plugins_string[:-2]
             if len(active_plugins) == 0:
                 active_plugins_string = "`没有运行中的插件。`"
-            if len(inactive_plugins) == 0:
+            if len(args) == 0:
                 inactive_plugins_string = "`没有加载失败的插件。`"
             if len(disabled_plugins) == 0:
                 disabled_plugins_string = "`没有关闭的插件`"
