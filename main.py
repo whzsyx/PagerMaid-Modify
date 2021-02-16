@@ -5,6 +5,7 @@ from pyrogram.types import Message
 from configparser import RawConfigParser
 from redis import StrictRedis
 from pathlib import Path
+from platform import system
 from sys import exit
 
 # [Basic]
@@ -38,9 +39,19 @@ par_map: Dict[str, str] = {}
 
 
 if os.path.exists('modules/plugins'):
-    os.system('mv -f modules/plugins/version.json plugins/plugins/version.json')
-    os.system('rm -rf modules/plugins')
-    exit()
+    if system() == 'Windows':
+        try:
+            os.system('move modules/plugins/version.json plugins/plugins/version.json')
+            os.system('rmdir /s/q modules/plugins')
+        except:
+            pass
+    else:
+        try:
+            os.system('mv -f modules/plugins/version.json plugins/plugins/version.json')
+            os.system('rm -rf modules/plugins')
+            exit()
+        except:
+            pass
 
 
 def reg_handler(cmd: str, handler: Callable[[Message, List[str], str], Awaitable[None]]) -> None:
