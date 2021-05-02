@@ -46,6 +46,7 @@ lang_dict: dict = {}
 try:
     with open(f"languages/built-in/{config['application_language']}.yml", "r", encoding="utf-8") as f:
         lang_dict = safe_load(f)
+        config['application_language'], config['language_name'] = lang_dict.get('father_language', config['application_language']), config['application_language']
 except Exception as e:
     print("Reading language YAML file failed")
     print(e)
