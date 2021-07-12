@@ -1,3 +1,4 @@
+import io, sys, traceback
 from main import bot, reg_handler, des_handler, par_handler
 from sys import exit, platform
 from asyncio import create_subprocess_shell
@@ -85,9 +86,65 @@ async def restart(message, args, origin_text):
         exit()
 
 
+async def sh_eval(message, args, origin_text):
+    """ Run python commands from Telegram. """
+    try:
+        cmd = origin_text.split(" ", maxsplit=1)[1]
+    except IndexError:
+        await message.edit('参数错误。')
+        return
+    old_stderr = sys.stderr
+    old_stdout = sys.stdout
+    redirected_output = sys.stdout = io.StringIO()
+    redirected_error = sys.stderr = io.StringIO()
+    stdout, stderr, exc = None, None, None
+    try:
+        await aexec(cmd, message, bot)
+    except Exception:
+        exc = traceback.format_exc()
+    stdout = redirected_output.getvalue()
+    stderr = redirected_error.getvalue()
+    sys.stdout = old_stdout
+    sys.stderr = old_stderr
+    if exc:
+        evaluation = exc
+    elif stderr:
+        evaluation = stderr
+    elif stdout:
+        evaluation = stdout
+    else:
+        evaluation = "Success"
+    final_output = (
+        "**>>>** ```{}``` \n```{}```".format(
+            cmd,
+            evaluation,
+        )
+    )
+    if len(final_output) > 4096:
+        await message.edit("**>>>** ```{}```".format(cmd))
+        await attach_log(bot, evaluation, message.chat.id, "output.log", message.message_id)
+    else:
+        await message.edit(final_output)
+
+
+async def aexec(code, event, client):
+    exec(
+        f"async def __aexec(e, client): "
+        + "\n msg = context = e"
+        + "\n reply = context.reply_to_message"
+        + "\n chat = e.chat"
+        + "".join(f"\n {l}" for l in code.split("\n")),
+    )
+
+    return await locals()["__aexec"](event, client)
+
+
 reg_handler('sh', sh)
 reg_handler('restart', restart)
+reg_handler('eval', sh_eval)
 des_handler('sh', '在 Telegram 上远程执行 Shell 命令。')
 des_handler('restart', '使 PagerMaid-Modify 重新启动。')
+des_handler('eval', '在 Telegram 上远程执行 Python 命令。')
 par_handler('sh', '<命令>')
 par_handler('restart', '')
+par_handler('eval', '<命令>')
