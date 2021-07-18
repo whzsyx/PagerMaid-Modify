@@ -431,6 +431,10 @@ merge_processing_left: Processing the 【
 merge_processing_right: '】st message.'
 merge_total_processed_left: A total of 【
 merge_total_processed_right: '】 stickers were processed.'
+## search
+sticker_search_des: 通过关键词查找 Sticker 包。
+sticker_search_no: 没有找到任何 Sticker 包。
+sticker_search_result: 以下是查找到的 Sticker 包：
 #system
 ## sh
 sh_des: remotely execute Shell commands on Telegram.
