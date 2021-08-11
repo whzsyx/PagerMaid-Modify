@@ -111,7 +111,9 @@ help_des: Shows a list of commands or help string of a single command.
 help_list: Commands
 help_send: Issue
 help_see: to view help for a specific command.*
-help_source: Source
+help_source: '🖥 源代码'
+help_plugin: '🔅 插件列表'
+help_module: '💠 內置模块'
 #qr
 ## genqr
 genqr_des: Generates a QR Code sticker from a specific string.
