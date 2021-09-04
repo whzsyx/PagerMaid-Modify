@@ -159,6 +159,7 @@ handle_failure_error: Something went wrong oh woo woo ~ Please report this probl
 time_des: Display the time in a specific area. If the parameter is empty, the configuration value will be displayed by default.
 time_parameters: <area>
 time_time: time
+time_config: 出错了呜呜呜 ~ 配置文件填写错误
 #external
 ## translate
 translate_des: Translate the target message into the specified language through Google Translate. (Support reply)
@@ -369,6 +370,7 @@ status_release: Kernel version
 status_python: Python version
 status_telethon: Telethon version
 status_db: database status
+status_uptime: 运行时间
 ## stats
 stats_des: View conversation statistics.
 stats_loading: Loading...
